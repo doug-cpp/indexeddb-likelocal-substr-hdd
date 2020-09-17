@@ -1,0 +1,36 @@
+h4 {
+    font-family: sans-serif;
+    text-align: center;
+    color: gray;
+}
+
+p {
+    font-family: sans-serif;
+    text-align: center;
+}
+
+table {
+    font-family: sans-serif;
+    background-color: gray;
+    
+    td {
+        padding: 10px;
+        background-color: white;
+    }
+
+    thead {
+        color: white;
+    }
+}
+
+.modal {
+    position: fixed;
+    padding: 40px;
+    width: auto;
+    height: auto;
+    top: 20%;
+    left: 50%;
+    z-index: 9;
+    background: radial-gradient(#fff, #def);
+    border: 5px solid rgb(194, 191, 191);
+}

@@ -1,20 +1,52 @@
-<!--The content below is only a placeholder and can be replaced.-->
-<div style="text-align:center">
-  <h1>
-    Welcome to {{ title }}!
-  </h1>
-  <img width="300" alt="Angular Logo" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNTAgMjUwIj4KICAgIDxwYXRoIGZpbGw9IiNERDAwMzEiIGQ9Ik0xMjUgMzBMMzEuOSA2My4ybDE0LjIgMTIzLjFMMTI1IDIzMGw3OC45LTQzLjcgMTQuMi0xMjMuMXoiIC8+CiAgICA8cGF0aCBmaWxsPSIjQzMwMDJGIiBkPSJNMTI1IDMwdjIyLjItLjFWMjMwbDc4LjktNDMuNyAxNC4yLTEyMy4xTDEyNSAzMHoiIC8+CiAgICA8cGF0aCAgZmlsbD0iI0ZGRkZGRiIgZD0iTTEyNSA1Mi4xTDY2LjggMTgyLjZoMjEuN2wxMS43LTI5LjJoNDkuNGwxMS43IDI5LjJIMTgzTDEyNSA1Mi4xem0xNyA4My4zaC0zNGwxNy00MC45IDE3IDQwLjl6IiAvPgogIDwvc3ZnPg==">
+<p style="color: brown">Este é o teste de buscar em lista usando HD ao
+  invés de SSD. Usar apenas console.log(), pois as impressões HTML
+  demandam tempo gasto em processamento de impressão em tela, o que não
+  reflete o tempo de resposta da operação em array grande! O projeto
+  principal se encontra no repositório "indexeddb". Não usar esse para
+  continuar a API do indexedDB!</p>
+<p>No Safari, está funcionando ok, os dados estão sendo mantidos para o dia
+  seguinte. Mas no Chrome, ao desligar o computador, quando abrimos novamente
+  o navegador, o banco está zerado e ele executa "upgrade needed", recriando
+  a tabela e perdendo os dados. Pode ser config do próprio navegador?
+  Anotar no iMac e no Macbook o comportamento. Verificar se entra ou não em
+  upgradeneeded():
+</p>
+<ol style="font-family: sans-serif;">
+  <li>ao refresh</li>
+  <li>ao reiniciar o navegador</li>
+  <li>ao reiniciar o computador</li>
+</ol>
+<div><input type="search" [(ngModel)]="likesearch" placeholder="Busca por nome"/>
+<button (click)="searchByName()">Buscar</button>
+<button (click)="reset()">Limpar</button>
+<button (click)="addFromJson()">Adicionar 200.000 do json!</button>
+<button (click)="searchFromSubstrClient()">Buscar por substring client</button>
 </div>
-<h2>Here are some links to help you start: </h2>
-<ul>
-  <li>
-    <h2><a target="_blank" rel="noopener" href="https://angular.io/tutorial">Tour of Heroes</a></h2>
-  </li>
-  <li>
-    <h2><a target="_blank" rel="noopener" href="https://github.com/angular/angular-cli/wiki">CLI Documentation</a></h2>
-  </li>
-  <li>
-    <h2><a target="_blank" rel="noopener" href="https://blog.angular.io/">Angular blog</a></h2>
-  </li>
-</ul>
-
+<table>
+  <thead>
+      <th>Key</th>
+      <th>Nome</th>
+      <th>Email</th>
+      <th>Idade</th>
+      <th colspan="2">Ações</th>
+  </thead>
+  <tr *ngFor="let item of clients | async">
+      <td>{{ item. key}}</td>
+      <td>{{ item. name }}</td>
+      <td>{{ item. email }}</td>
+      <td>{{ item. age }}</td>
+      <td><button (click)="formdiv.hidden = false; edit(item.key)">Editar</button></td>
+      <td><button (click)="delete(item.key)">Apagar</button></td>
+  </tr>
+</table>
+<hr/><button (click)="formdiv.hidden = false; openAdd()">Adicionar</button>
+<div id="formdiv" #formdiv class="modal" [hidden]="true">
+  <h4>{{ currentClient.key }}</h4>
+  <form>
+      <br/><input [(ngModel)]="currentClient.name" type="search" name="name" placeholder="Nome do cliente"/>
+      <br/><input [(ngModel)]="currentClient.email" type="email" name="email" placeholder="E-mail"/>
+      <br/><input [(ngModel)]="currentClient.age" type="number" name="age" placeholder="Idade"/>
+      <p><button (click)="add()">Salvar</button>
+      <button (click)="formdiv.hidden = true">Cancelar</button></p>
+  </form>
+</div>
