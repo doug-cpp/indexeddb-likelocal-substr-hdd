@@ -54,23 +54,49 @@ export class AppComponent {
    }
 
    // ---------------------------------------------------------------------------
-   
-   searchFromSubstrClient(): void {
+
+   searchFromSubstrOpenCursor(): void {
      this.clientSearchResult = [];
-    this.idbs.readList('jsonbig').then((list: {id: number, name: string, email: string}[]) => {
-      list.forEach(el => {
-        if(el.name.toLowerCase().latinise().includes(this.likesearch.toLowerCase().latinise())) {
-          this.clientSearchResult.push(el);
-        }
-      });
+
+     // Tipar isso!
+    const options = [{type: 'like', field: 'name', value: this.likesearch}];
+    console.log('start searching');
+    const t1 = performance.now();
+
+    this.idbs.readList('jsonbig', options).then((l: {id: number, name: string, email: string}[]) => {
+      this.clientSearchResult = l;
       if(this.clientSearchResult.length > 2) {
         console.log(this.clientSearchResult[0]);
         console.log(this.clientSearchResult[1]);
         console.log(this.clientSearchResult[2]);
       }
       console.log(`Encontrados ${this.clientSearchResult.length} registro(s).`);
-    });
+      console.log(`Operação demorou ${(performance.now() - t1) / 1000} segundos.`);
+    }, err => console.error(err));
    }
+
+   // ---------------------------------------------------------------------------
+   searchFromSubstrGetAll(): void {
+     this.clientSearchResult = [];
+
+    console.log('start searching');
+    const t1 = performance.now();
+
+    this.idbs.readList('jsonbig').then((list: {id: number, name: string, email: string}[]) => {
+      list.forEach(el => {
+        if(el.name.toLowerCase().latinise().includes(this.likesearch.toLowerCase().latinise())) {
+            this.clientSearchResult.push(el);
+          }
+        });
+        if(this.clientSearchResult.length > 2) {
+          console.log(this.clientSearchResult[0]);
+          console.log(this.clientSearchResult[1]);
+          console.log(this.clientSearchResult[2]);
+        }
+        console.log(`Encontrados ${this.clientSearchResult.length} registro(s).`);
+        console.log(`Operação demorou ${(performance.now() - t1) / 1000} segundos.`);
+      });
+    }
 
    // ---------------------------------------------------------------------------
    
