@@ -11,6 +11,8 @@
 /////////////////////
 import { Injectable } from '@angular/core';
 
+import './latinise';
+
 interface TableConfig {
   name: string;
   key: string;
@@ -205,16 +207,78 @@ export class IdbService {
     });
   }
 
-  readList(table: string, options?: any,
+  readList(table: string, options?: Array<{type: string, field: string, value: string}>,
     sortOptions?: { key: string, type: 'asc' | 'desc' }): Promise<{}[]> {
     return new Promise((resolve, reject) => {
 
       const transaction = this.db.transaction(table, 'readonly');
       const store = transaction.objectStore(table);
-      const list = store.getAll();
-      // const list = store.getAll();
-      list.onsuccess = evt => resolve(list.result);
-      list.onerror = evt => reject(`Table ${table} exists? ${list.error}`);
+
+      if(!options) {
+        const list = store.getAll();
+        list.onsuccess = evt => resolve(list.result);
+        list.onerror = evt => reject(`Table ${table} exists? ${list.error}`);
+      } else {
+        if(!Array.isArray(options)) {
+          reject('If given, options must be an array of filter options.');
+        }
+        if(options.length === 0) {
+          reject('If given, options must have at least one option.');
+        }
+        options.forEach((opt: {type: string, field: string, value: string}) => {
+          if(!opt.hasOwnProperty('type')) {
+            reject('If given, all options must interface {type: string, field: string}.');
+          }
+          if(opt.type.length === 0) {
+            reject('If given, all type of options must be described');
+          }
+        });
+        const filteredArray = [];
+        const list = store.openCursor();
+        list.onsuccess = evt => {
+          const cursor = list.result;
+          if(cursor) {
+
+            if(cursor.value[options[0].field]
+              .toLowerCase()
+              .latinise()
+              .includes(options[0].value.toLowerCase().latinise())) {
+              filteredArray.push(cursor.value);
+            }
+
+            // options.forEach(opt => {
+            //   if(opt.type === 'like') {
+            //     if(cursor.value[opt.field]
+            //       .toLowerCase()
+            //       .latinise()
+            //       .includes(opt.value.toLowerCase().latinise())) {
+            //       filteredArray.push(cursor.value);
+            //     }
+            //   }
+            // });
+            cursor.continue();
+          } else {
+            console.log('filtering complete!');
+            resolve(filteredArray);
+          }
+        };
+        list.onerror = evt => reject(`Problems on filtering: ${list.error}`);
+
+       ///
+      //  objectStore.openCursor().onsuccess = function(event) {
+      //   var cursor = event.target.result;
+      //   if(cursor) {
+      //     var listItem = document.createElement('li');
+      //     listItem.innerHTML = cursor.value.albumTitle + ', ' + cursor.value.year;
+      //     list.appendChild(listItem);  
+    
+      //     cursor.continue();
+      //   } else {
+      //     console.log('Entries all displayed.');
+      //   }
+      // };
+        ///
+      }
     });
   }
 
